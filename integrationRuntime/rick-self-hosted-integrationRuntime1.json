@@ -1,0 +1,6 @@
+{
+	"name": "rick-self-hosted-integrationRuntime1",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
