@@ -19,7 +19,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@item().p_file",
+					"value": "@dataset().p_file",
 					"type": "Expression"
 				},
 				"folderPath": "onprem",
