@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"p_file": {
+			"p_file_bronze": {
 				"type": "string"
 			}
 		},
@@ -16,7 +16,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": {
-					"value": "@dataset().p_file",
+					"value": "@dataset().p_file_bronze",
 					"type": "Expression"
 				},
 				"folderPath": "onprem",
