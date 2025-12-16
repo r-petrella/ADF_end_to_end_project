@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ForEach1",
+				"name": "ForEach_source_file_to_bronze",
 				"type": "ForEach",
 				"dependsOn": [
 					{
