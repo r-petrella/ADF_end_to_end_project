@@ -1,0 +1,17 @@
+{
+	"name": "liked_service_on_prem_file",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "C:\\Users\\riccardo.petrella",
+			"userId": "riccardo.petrella@dolcegabbana.it",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI1NWY3Yjc4Ni0xZGI4LTQ0YmMtODBiOC0yZjRiMTc0YWUxMDMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "integrationRuntimerick",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
