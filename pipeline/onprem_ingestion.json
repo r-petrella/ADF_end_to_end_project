@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup_source_files').output",
+						"value": "@activity('Lookup_source_files').output.value",
 						"type": "Expression"
 					},
 					"activities": [
