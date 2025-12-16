@@ -1,0 +1,23 @@
+{
+	"name": "DelimitedText_passenger",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "liked_service_on_prem_file",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": "DimPassenger.csv",
+				"folderPath": "ADF_end_to_end_project"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
