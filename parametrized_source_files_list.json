@@ -1,0 +1,16 @@
+[
+  {
+    "p_file": "DimAirline.csv",
+	"p_file_bronze": "DimAirline.parquet"
+  },
+  {
+
+    "p_file": "DimFlight.csv",
+	"p_file_bronze": "DimFlight.parquet"
+  },
+  {
+
+    "p_file": "DimPassenger.csv",
+	"p_file_bronze": "DimPassenger.parquet"
+  }
+]
