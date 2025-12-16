@@ -1,0 +1,21 @@
+{
+	"name": "dataset_onprem_file",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "linked_service_ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "airlines.parquet",
+				"folderPath": "onprem",
+				"fileSystem": "bronze"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
