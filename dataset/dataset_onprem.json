@@ -10,7 +10,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "FileServerLocation",
-				"fileName": "DimAirline.csv",
+				"fileName": {
+					"value": "item()",
+					"type": "Expression"
+				},
 				"folderPath": "ADF_end_to_end_project"
 			},
 			"columnDelimiter": ",",
