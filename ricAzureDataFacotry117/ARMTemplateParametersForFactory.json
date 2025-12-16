@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ricAzureDataFacotry117"
+		},
+		"liked_service_on_prem_file_password": {
+			"value": ""
+		},
+		"linked_service_ADLS_accountKey": {
+			"value": ""
+		},
+		"liked_service_on_prem_file_properties_typeProperties_host": {
+			"value": "C:\\Users\\riccardo.petrella"
+		},
+		"liked_service_on_prem_file_properties_typeProperties_userId": {
+			"value": "riccardo.petrella@dolcegabbana.it"
+		},
+		"linked_service_ADLS_properties_typeProperties_url": {
+			"value": "https://adfrickystorage.dfs.core.windows.net/"
+		}
+	}
+}
