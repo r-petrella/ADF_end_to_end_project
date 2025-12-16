@@ -1,0 +1,9 @@
+{
+	"name": "ricAzureDataFacotry117",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a97102b3-7c2e-4f33-ba9c-0a9c54fc09d5",
+		"tenantId": "be50fa3b-c833-4bb4-b7ee-9a5b37bcfc2b"
+	}
+}

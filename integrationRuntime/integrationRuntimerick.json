@@ -1,0 +1,6 @@
+{
+	"name": "integrationRuntimerick",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
