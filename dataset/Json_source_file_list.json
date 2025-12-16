@@ -1,0 +1,19 @@
+{
+	"name": "Json_source_file_list",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "liked_service_on_prem_file",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": "parametrized_source_files_list.json",
+				"folderPath": "ADF_end_to_end_project"
+			}
+		},
+		"schema": {}
+	}
+}
