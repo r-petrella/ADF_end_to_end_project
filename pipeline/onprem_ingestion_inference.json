@@ -37,20 +37,80 @@
 					},
 					"enableStaging": false,
 					"translator": {
-						"value": "@json('\n{\n            \"type\": \"TabularTranslator\",\n            \"mappings\": [\n                {\n                    \"source\": {\n                        \"name\": \"passenger_id\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"String\"\n                    },\n                    \"sink\": {\n                        \"name\": \"passenger_id\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"UTF8\"\n                    }\n                },\n                {\n                    \"source\": {\n                        \"name\": \"full_name\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"String\"\n                    },\n                    \"sink\": {\n                        \"name\": \"full_name\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"UTF8\"\n                    }\n                },\n                {\n                    \"source\": {\n                        \"name\": \"gender\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"String\"\n                    },\n                    \"sink\": {\n                        \"name\": \"gender\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"UTF8\"\n                    }\n                },\n                {\n                    \"source\": {\n                        \"name\": \"age\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"String\"\n                    },\n                    \"sink\": {\n                        \"name\": \"age\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"UTF8\"\n                    }\n                },\n                {\n                    \"source\": {\n                        \"name\": \"country\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"String\"\n                    },\n                    \"sink\": {\n                        \"name\": \"country\",\n                        \"type\": \"String\",\n                        \"physicalType\": \"UTF8\"\n                    }\n                }\n            ],\n            \"typeConversion\": true,\n            \"typeConversionSettings\": {\n                \"allowDataTruncation\": true,\n                \"treatBooleanAsNumber\": false\n            }\n        }\n')\n",
-						"type": "Expression"
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "flight_id",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "flight_id",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "flight_number",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "flight_number",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "departure_time",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "departure_time",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "arrival_time",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "arrival_time",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
 					}
 				},
 				"inputs": [
 					{
-						"referenceName": "DelimitedText_passenger",
-						"type": "DatasetReference"
+						"referenceName": "source_dataset_onprem",
+						"type": "DatasetReference",
+						"parameters": {
+							"p_file": "DimFlight.csv"
+						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Parquet_sink_passengers",
-						"type": "DatasetReference"
+						"referenceName": "bronze_dataset_file",
+						"type": "DatasetReference",
+						"parameters": {
+							"p_file_bronze": "DimFlight.parquet"
+						}
 					}
 				]
 			}
