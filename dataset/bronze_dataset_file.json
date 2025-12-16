@@ -1,16 +1,27 @@
 {
-	"name": "dataset_onprem_file",
+	"name": "bronze_dataset_file",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "linked_service_ADLS",
 			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_path": {
+				"type": "string"
+			},
+			"p_file": {
+				"type": "string"
+			}
 		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "airlines.parquet",
+				"fileName": {
+					"value": "@item().p_file",
+					"type": "Expression"
+				},
 				"folderPath": "onprem",
 				"fileSystem": "bronze"
 			},
