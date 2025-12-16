@@ -55,17 +55,6 @@
 				]
 			}
 		],
-		"parameters": {
-			"p_mapping_flight": {
-				"type": "object"
-			},
-			"p_mapping_passenger": {
-				"type": "object"
-			},
-			"p_mapping_airline": {
-				"type": "object"
-			}
-		},
 		"annotations": []
 	}
 }
