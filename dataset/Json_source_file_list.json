@@ -1,23 +1,19 @@
 {
-	"name": "dataset_onprem",
+	"name": "Json_source_file_list",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "liked_service_on_prem_file",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Json",
 		"typeProperties": {
 			"location": {
 				"type": "FileServerLocation",
-				"fileName": "DimAirline.csv",
+				"fileName": "parametrized_source_files_list.json",
 				"folderPath": "ADF_end_to_end_project"
-			},
-			"columnDelimiter": ",",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
+			}
 		},
-		"schema": []
+		"schema": {}
 	}
 }
