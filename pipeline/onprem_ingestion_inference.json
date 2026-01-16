@@ -3,7 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Copy data for mapping",
+				"description": "hardcode in source and sink the file name to import the mapping for each file and copy the json metadata of the copy activity and paste it in the main pipeline parameters (one parameter per file - mapping)",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {

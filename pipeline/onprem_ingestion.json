@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "ForEach_source_file_to_bronze",
+				"description": "dynamic mapping included",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -55,12 +56,8 @@
 								},
 								"enableStaging": false,
 								"translator": {
-									"type": "TabularTranslator",
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
+									"value": "@if(equals(item().p_file, 'DimPassenger.csv'), pipeline().parameters.p_mapping_passenger,if(equals(item().p_file, 'DimAirline.csv'),pipeline().parameters.p_mapping_airline,pipeline().parameters.p_mapping_flight))",
+									"type": "Expression"
 								}
 							},
 							"inputs": [
