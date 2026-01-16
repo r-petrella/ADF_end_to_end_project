@@ -33,16 +33,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/integrationRuntimerick')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "SelfHosted",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/linked_service_ADLS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -60,28 +50,14 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/liked_service_on_prem_file')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimerick')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"type": "FileServer",
-				"typeProperties": {
-					"host": "[parameters('liked_service_on_prem_file_properties_typeProperties_host')]",
-					"userId": "[parameters('liked_service_on_prem_file_properties_typeProperties_userId')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('liked_service_on_prem_file_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "integrationRuntimerick",
-					"type": "IntegrationRuntimeReference"
-				}
+				"type": "SelfHosted",
+				"typeProperties": {}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimerick')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/bronze_dataset_file')]",
@@ -115,6 +91,54 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/liked_service_on_prem_file')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('liked_service_on_prem_file_properties_typeProperties_host')]",
+					"userId": "[parameters('liked_service_on_prem_file_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('liked_service_on_prem_file_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntimerick",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimerick')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json_source_file_list')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "liked_service_on_prem_file",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": "parametrized_source_files_list.json",
+						"folderPath": "ADF_end_to_end_project"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/liked_service_on_prem_file')]"
 			]
 		},
 		{
@@ -154,30 +178,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Json_source_file_list')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "liked_service_on_prem_file",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "FileServerLocation",
-						"fileName": "parametrized_source_files_list.json",
-						"folderPath": "ADF_end_to_end_project"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/liked_service_on_prem_file')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/onprem_ingestion')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -185,6 +185,7 @@
 				"activities": [
 					{
 						"name": "ForEach_source_file_to_bronze",
+						"description": "dynamic mapping included",
 						"type": "ForEach",
 						"dependsOn": [
 							{
@@ -236,12 +237,8 @@
 										},
 										"enableStaging": false,
 										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
+											"value": "@if(equals(item().p_file, 'DimPassenger.csv'), pipeline().parameters.p_mapping_passenger,if(equals(item().p_file, 'DimAirline.csv'),pipeline().parameters.p_mapping_airline,pipeline().parameters.p_mapping_flight))",
+											"type": "Expression"
 										}
 									},
 									"inputs": [
@@ -509,7 +506,8 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "Copy data for mapping",
+						"description": "hardcode in source and sink the file name to import the mapping for each file and copy the json metadata of the copy activity and paste it in the main pipeline parameters (one parameter per file - mapping)",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
