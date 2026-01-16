@@ -31,7 +31,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT * FROM dbo.FactBookings WHERE booking_date > '@{activity('Lookup_lastLoad').output.firstRow.lastload}' AND booking_date <= '@{activity('Lookup_LatestLoad').output}'",
+							"value": "SELECT * FROM dbo.FactBookings WHERE booking_date > '@{activity('Lookup_lastLoad').output.firstRow.lastload}' AND booking_date <= '@{activity('Lookup_LatestLoad').output.firstRow.latestload}'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
