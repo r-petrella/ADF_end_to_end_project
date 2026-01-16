@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'linked_service_ADLS'"
 		},
+		"Linked_service_github_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/"
+		},
 		"liked_service_on_prem_file_properties_typeProperties_host": {
 			"type": "string",
 			"defaultValue": "C:\\Users\\riccardo.petrella"
@@ -59,6 +63,9 @@
 					},
 					"liked_service_on_prem_file_password": {
 						"value": "[parameters('liked_service_on_prem_file_password')]"
+					},
+					"Linked_service_github_properties_typeProperties_url": {
+						"value": "[parameters('Linked_service_github_properties_typeProperties_url')]"
 					},
 					"linked_service_ADLS_properties_typeProperties_url": {
 						"value": "[parameters('linked_service_ADLS_properties_typeProperties_url')]"

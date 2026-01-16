@@ -11,6 +11,9 @@
 		"linked_service_ADLS_accountKey": {
 			"value": ""
 		},
+		"Linked_service_github_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/"
+		},
 		"liked_service_on_prem_file_properties_typeProperties_host": {
 			"value": "C:\\Users\\riccardo.petrella"
 		},
