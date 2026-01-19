@@ -5,11 +5,23 @@
 		"factoryName": {
 			"value": "ricAzureDataFacotry117"
 		},
+		"AzureSql_password": {
+			"value": ""
+		},
 		"liked_service_on_prem_file_password": {
 			"value": ""
 		},
 		"linked_service_ADLS_accountKey": {
 			"value": ""
+		},
+		"AzureSql_properties_typeProperties_server": {
+			"value": "adfprojrctonprem.database.windows.net"
+		},
+		"AzureSql_properties_typeProperties_database": {
+			"value": "adfprojectonprem"
+		},
+		"AzureSql_properties_typeProperties_userName": {
+			"value": "adminadmin"
 		},
 		"Linked_service_github_properties_typeProperties_url": {
 			"value": "https://raw.githubusercontent.com/"
