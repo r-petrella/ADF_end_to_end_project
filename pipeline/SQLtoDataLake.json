@@ -5,6 +5,8 @@
 			{
 				"name": "CopySQLData",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Lookup_lastLoad",
@@ -72,6 +74,8 @@
 			{
 				"name": "Lookup_lastLoad",
 				"type": "Lookup",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -103,6 +107,8 @@
 			{
 				"name": "Lookup_LatestLoad",
 				"type": "Lookup",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -150,7 +156,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "'@{activity('Lookup_LatestLoad').output.firstRow.latestload}'",
+						"sqlReaderQuery": "SELECT MAX(booking_date) as latestload\nfrom dbo.FactBookings",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -173,7 +179,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_json_empty",
+						"referenceName": "Json1_lastload",
 						"type": "DatasetReference"
 					}
 				]
