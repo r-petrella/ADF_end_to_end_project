@@ -154,7 +154,7 @@
 							{
 								"name": "lastload",
 								"value": {
-									"value": "@activity('Lookup_LatestLoad').output.firstRow",
+									"value": "@activity('Lookup_LatestLoad').output.firstRow.latestload",
 									"type": "Expression"
 								}
 							}
