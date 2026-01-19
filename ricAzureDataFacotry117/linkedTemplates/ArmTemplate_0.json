@@ -320,31 +320,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_json_empty')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "linked_service_ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "empty.json",
-						"folderPath": "monitor/emptyjson",
-						"fileSystem": "bronze"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/liked_service_on_prem_file')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -654,24 +629,10 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "JsonSource",
-								"additionalColumns": [
-									{
-										"name": "lastload",
-										"value": {
-											"value": "@activity('Lookup_LatestLoad').output.firstRow.latestload",
-											"type": "Expression"
-										}
-									}
-								],
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT MAX(booking_date) as latestload\nfrom dbo.FactBookings",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
 							},
 							"sink": {
 								"type": "JsonSink",
@@ -686,7 +647,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "ds_json_empty",
+								"referenceName": "AzureSql",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -713,8 +674,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureSql')]",
 				"[concat(variables('factoryId'), '/datasets/Parquet_lastload')]",
-				"[concat(variables('factoryId'), '/datasets/Json1_lastload')]",
-				"[concat(variables('factoryId'), '/datasets/ds_json_empty')]"
+				"[concat(variables('factoryId'), '/datasets/Json1_lastload')]"
 			]
 		},
 		{
