@@ -149,24 +149,10 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "JsonSource",
-						"additionalColumns": [
-							{
-								"name": "lastload",
-								"value": {
-									"value": "@activity('Lookup_LatestLoad').output.firstRow.latestload",
-									"type": "Expression"
-								}
-							}
-						],
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "JsonReadSettings"
-						}
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "'@{activity('Lookup_LatestLoad').output.firstRow.latestload}'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"sink": {
 						"type": "JsonSink",
@@ -181,13 +167,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ds_json_empty",
+						"referenceName": "AzureSql",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Json1_lastload",
+						"referenceName": "ds_json_empty",
 						"type": "DatasetReference"
 					}
 				]
