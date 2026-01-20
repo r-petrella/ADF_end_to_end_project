@@ -173,7 +173,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Json1_lastload",
+						"referenceName": "Json_latestload",
 						"type": "DatasetReference"
 					}
 				]
