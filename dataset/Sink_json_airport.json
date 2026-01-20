@@ -1,5 +1,5 @@
 {
-	"name": "Sink_json",
+	"name": "Sink_json_airport",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "linked_service_ADLS",

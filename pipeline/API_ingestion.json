@@ -100,13 +100,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Json_source",
+						"referenceName": "Json_source_airport",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Sink_json",
+						"referenceName": "Sink_json_airport",
 						"type": "DatasetReference"
 					}
 				]
