@@ -55,6 +55,29 @@
 					},
 					"waitOnCompletion": true
 				}
+			},
+			{
+				"name": "ExecuteIncrementalIngestion",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ExecuteAPI",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Incremental_ingestion",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
 			}
 		],
 		"parameters": {
