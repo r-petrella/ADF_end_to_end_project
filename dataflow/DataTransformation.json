@@ -44,6 +44,9 @@
 			"transformations": [
 				{
 					"name": "derivedColumnCountry"
+				},
+				{
+					"name": "selectCols"
 				}
 			],
 			"scriptLines": [
@@ -56,7 +59,13 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> BronzeDimAirline",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          flight_id as string,",
+				"          flight_number as string,",
+				"          departure_time as string,",
+				"          arrival_time as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> BronzeDimFlight",
@@ -72,7 +81,15 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> BronzeDimAirport",
-				"BronzeDimAirline derive() ~> derivedColumnCountry"
+				"BronzeDimAirline derive(country = upper(country)) ~> derivedColumnCountry",
+				"BronzeDimFlight select(mapColumn(",
+				"          flight_id,",
+				"          flight_number,",
+				"          departure_timestamp = departure_time,",
+				"          arrival_timestamp = arrival_time",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectCols"
 			]
 		}
 	}
