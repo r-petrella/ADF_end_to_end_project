@@ -236,6 +236,40 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ParquetBronze')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linked_service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"p_filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().p_filename",
+							"type": "Expression"
+						},
+						"folderPath": "onprem",
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Parquet_lastload')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -341,6 +375,134 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimerick')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BronzeDimAirline')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linked_service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "DimAirline.parquet",
+						"folderPath": "onprem",
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BronzeDimFlight')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linked_service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "DimFlight.parquet",
+						"folderPath": "onprem",
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BronzeDimPassenger')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linked_service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "DimPassenger.parquet",
+						"folderPath": "onprem",
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BronzeFactBooking')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linked_service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "sql",
+						"fileSystem": "bronze"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BronzeDimAirport')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "linked_service_ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "DimAirport.json",
+						"folderPath": "github",
+						"fileSystem": "bronze"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/linked_service_ADLS')]"
 			]
 		},
 		{
@@ -699,806 +861,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/liked_service_on_prem_file')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/source_dataset_onprem')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "liked_service_on_prem_file",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"p_file": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "FileServerLocation",
-						"fileName": {
-							"value": "@dataset().p_file",
-							"type": "Expression"
-						},
-						"folderPath": "ADF_end_to_end_project"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/liked_service_on_prem_file')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/onprem_ingestion')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ForEach_source_file_to_bronze",
-						"description": "dynamic mapping included",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Lookup_source_files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Lookup_source_files').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data from csv to parquet",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "FileServerReadSettings",
-												"recursive": true,
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "ParquetSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "ParquetWriteSettings"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"value": "@if(equals(item().p_file, 'DimPassenger.csv'), pipeline().parameters.p_mapping_passenger,if(equals(item().p_file, 'DimAirline.csv'),pipeline().parameters.p_mapping_airline,pipeline().parameters.p_mapping_flight))",
-											"type": "Expression"
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "source_dataset_onprem",
-											"type": "DatasetReference",
-											"parameters": {
-												"p_file": {
-													"value": "@item().p_file",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "bronze_dataset_file",
-											"type": "DatasetReference",
-											"parameters": {
-												"p_file_bronze": {
-													"value": "@item().p_file_bronze",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					},
-					{
-						"name": "Lookup_source_files",
-						"description": "instead of using lookup, we could have used pipelines parameters with the full list of source files but it's better with lookup",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "FileServerReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "Json_source_file_list",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"p_mapping_flight": {
-						"type": "object",
-						"defaultValue": {
-							"type": "TabularTranslator",
-							"mappings": [
-								{
-									"source": {
-										"name": "flight_id",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "flight_id",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "flight_number",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "flight_number",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "departure_time",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "departure_time",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "arrival_time",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "arrival_time",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								}
-							],
-							"typeConversion": true,
-							"typeConversionSettings": {
-								"allowDataTruncation": true,
-								"treatBooleanAsNumber": false
-							}
-						}
-					},
-					"p_mapping_passenger": {
-						"type": "object",
-						"defaultValue": {
-							"type": "TabularTranslator",
-							"mappings": [
-								{
-									"source": {
-										"name": "passenger_id",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "passenger_id",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "full_name",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "full_name",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "gender",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "gender",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "age",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "age",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								}
-							],
-							"typeConversion": true,
-							"typeConversionSettings": {
-								"allowDataTruncation": true,
-								"treatBooleanAsNumber": false
-							}
-						}
-					},
-					"p_mapping_airline": {
-						"type": "object",
-						"defaultValue": {
-							"type": "TabularTranslator",
-							"mappings": [
-								{
-									"source": {
-										"name": "airline_id",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "airline_id",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "airline_name",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "airline_name",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								}
-							],
-							"typeConversion": true,
-							"typeConversionSettings": {
-								"allowDataTruncation": true,
-								"treatBooleanAsNumber": false
-							}
-						}
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Json_source_file_list')]",
-				"[concat(variables('factoryId'), '/datasets/source_dataset_onprem')]",
-				"[concat(variables('factoryId'), '/datasets/bronze_dataset_file')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/onprem_ingestion_inference')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data for mapping",
-						"description": "hardcode in source and sink the file name to import the mapping for each file and copy the json metadata of the copy activity and paste it in the main pipeline parameters (one parameter per file - mapping)",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "FileServerReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "ParquetSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "ParquetWriteSettings"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "flight_id",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "flight_id",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "flight_number",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "flight_number",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "departure_time",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "departure_time",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									},
-									{
-										"source": {
-											"name": "arrival_time",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "arrival_time",
-											"type": "String",
-											"physicalType": "UTF8"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "source_dataset_onprem",
-								"type": "DatasetReference",
-								"parameters": {
-									"p_file": "DimFlight.csv"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "bronze_dataset_file",
-								"type": "DatasetReference",
-								"parameters": {
-									"p_file_bronze": "DimFlight.parquet"
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/source_dataset_onprem')]",
-				"[concat(variables('factoryId'), '/datasets/bronze_dataset_file')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Parent_Pipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ExecuteOnPrem",
-						"description": "Insert in the parent pipeline the parameters of the child pipelines!!!",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "onprem_ingestion",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"p_mapping_flight": {
-									"value": "@pipeline().parameters.p_mapping_flight",
-									"type": "Expression"
-								},
-								"p_mapping_passenger": {
-									"value": "@pipeline().parameters.p_mapping_passenger",
-									"type": "Expression"
-								},
-								"p_mapping_airline": {
-									"value": "@pipeline().parameters.p_mapping_airline",
-									"type": "Expression"
-								}
-							}
-						}
-					},
-					{
-						"name": "ExecuteAPI",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ExecuteOnPrem",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "API_ingestion",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "ExecuteIncrementalIngestion",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ExecuteAPI",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Incremental_ingestion",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Failure_success Alert",
-						"description": "COLLEGAMENTO ALLA LOGIC APP ATTRAVERSO UNA REST API. QUANDO QUESTA ACTIVITY WEB CONTATTA LA LOGIC APP ATTRAVERSO L'HTTP DELLA REST API, LA LOGIC APP INVIA UNA MAIL CON VARIABILI DINAMICHE PER INDICARE LO STATO DI  ESECUZIONE DELLA TERZA PIPELINE. LO SCRIPT DINAMICO DELLA WEB ACTIVITY DEVE AVERE I NOMI DELLE VARIABILI CHE CORRISPONDONO A QUELLI CREATI NEL JSON DELLA LOGIC APP, COSI' SULLA MAIL DELL'APP ARRIVANO LE VARIABILI DALLA WEB ACTIVITY",
-						"type": "WebActivity",
-						"dependsOn": [
-							{
-								"activity": "ExecuteIncrementalIngestion",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"method": "POST",
-							"headers": {},
-							"url": "https://adflogicapp-dzcnfxerbkhhgggd.italynorth-01.azurewebsites.net:443/api/alerts/triggers/When_an_HTTP_request_is_received/invoke?api-version=2022-05-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=ZvQc9NqVkAtX4zCsOs-eavQ4K2dZ2SBYQ7UndBm0hA0",
-							"body": {
-								"value": "{\n    \"pipeline_name\": \"@{pipeline().Pipeline}\",\n    \"run_id\": \"@{pipeline().RunId}\",\n    \"status\": \"@{activity('ExecuteIncrementalIngestion').Status}\",\n    \"error\": \"@{if(equals(activity('ExecuteIncrementalIngestion').Status, 'Failed'), string(activity('ExecuteIncrementalIngestion').error), 'Success')}\"\n}",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"p_mapping_flight": {
-						"type": "object",
-						"defaultValue": {
-							"type": "TabularTranslator",
-							"mappings": [
-								{
-									"source": {
-										"name": "flight_id",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "flight_id",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "flight_number",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "flight_number",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "departure_time",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "departure_time",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "arrival_time",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "arrival_time",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								}
-							],
-							"typeConversion": true,
-							"typeConversionSettings": {
-								"allowDataTruncation": true,
-								"treatBooleanAsNumber": false
-							}
-						}
-					},
-					"p_mapping_passenger": {
-						"type": "object",
-						"defaultValue": {
-							"type": "TabularTranslator",
-							"mappings": [
-								{
-									"source": {
-										"name": "passenger_id",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "passenger_id",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "full_name",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "full_name",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "gender",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "gender",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "age",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "age",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								}
-							],
-							"typeConversion": true,
-							"typeConversionSettings": {
-								"allowDataTruncation": true,
-								"treatBooleanAsNumber": false
-							}
-						}
-					},
-					"p_mapping_airline": {
-						"type": "object",
-						"defaultValue": {
-							"type": "TabularTranslator",
-							"mappings": [
-								{
-									"source": {
-										"name": "airline_id",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "airline_id",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "airline_name",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "airline_name",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								},
-								{
-									"source": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "String"
-									},
-									"sink": {
-										"name": "country",
-										"type": "String",
-										"physicalType": "UTF8"
-									}
-								}
-							],
-							"typeConversion": true,
-							"typeConversionSettings": {
-								"allowDataTruncation": true,
-								"treatBooleanAsNumber": false
-							}
-						}
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/onprem_ingestion')]",
-				"[concat(variables('factoryId'), '/pipelines/API_ingestion')]",
-				"[concat(variables('factoryId'), '/pipelines/Incremental_ingestion')]"
 			]
 		}
 	]
