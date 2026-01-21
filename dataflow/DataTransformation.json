@@ -1,0 +1,47 @@
+{
+	"name": "DataTransformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "BronzeDimAirline",
+						"type": "DatasetReference"
+					},
+					"name": "BronzeAirline"
+				},
+				{
+					"dataset": {
+						"referenceName": "BronzeDimFlight",
+						"type": "DatasetReference"
+					},
+					"name": "BronzeFlight"
+				},
+				{
+					"dataset": {
+						"referenceName": "BronzeDimPassenger",
+						"type": "DatasetReference"
+					},
+					"name": "BronzePassenger"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> BronzeAirline",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> BronzeFlight",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> BronzePassenger"
+			]
+		}
+	}
+}
