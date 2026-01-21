@@ -53,6 +53,15 @@
 				},
 				{
 					"name": "derivedGenderFlag"
+				},
+				{
+					"name": "derivedGenderFlagFemale"
+				},
+				{
+					"name": "filterAge"
+				},
+				{
+					"name": "derivedName"
 				}
 			],
 			"scriptLines": [
@@ -79,7 +88,7 @@
 				"          passenger_id as string,",
 				"          full_name as string,",
 				"          gender as string,",
-				"          age as string,",
+				"          age as integer,",
 				"          country as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -112,8 +121,10 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> selectColstoRename",
-				"selectColstoRename derive(gender_flag = regexReplace(gender_flag, \"M\", \"Male\"),",
-				"          gender_flag = regexReplace(gender_flag, \"F\", \"Female\")) ~> derivedGenderFlag"
+				"selectColstoRename derive(gender_flag = regexReplace(gender_flag, \"M\", \"Male\")) ~> derivedGenderFlag",
+				"derivedGenderFlag derive(gender_flag = regexReplace(gender_flag, \"F\", \"Female\")) ~> derivedGenderFlagFemale",
+				"derivedGenderFlagFemale filter(age > 25 ) ~> filterAge",
+				"filterAge derive(first_name = split(full_name, \" \")[1]) ~> derivedName"
 			]
 		}
 	}
