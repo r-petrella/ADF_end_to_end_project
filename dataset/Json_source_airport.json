@@ -1,5 +1,5 @@
 {
-	"name": "Json_source",
+	"name": "Json_source_airport",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Linked_service_github",
