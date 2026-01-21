@@ -9,38 +9,70 @@
 						"referenceName": "BronzeDimAirline",
 						"type": "DatasetReference"
 					},
-					"name": "BronzeAirline"
+					"name": "BronzeDimAirline"
 				},
 				{
 					"dataset": {
 						"referenceName": "BronzeDimFlight",
 						"type": "DatasetReference"
 					},
-					"name": "BronzeFlight"
+					"name": "BronzeDimFlight"
 				},
 				{
 					"dataset": {
 						"referenceName": "BronzeDimPassenger",
 						"type": "DatasetReference"
 					},
-					"name": "BronzePassenger"
+					"name": "BronzeDimPassenger"
+				},
+				{
+					"dataset": {
+						"referenceName": "BronzeFactBooking",
+						"type": "DatasetReference"
+					},
+					"name": "BronzeFactBooking"
+				},
+				{
+					"dataset": {
+						"referenceName": "BronzeDimAirport",
+						"type": "DatasetReference"
+					},
+					"name": "BronzeDimAirport"
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumnCountry"
+				}
+			],
 			"scriptLines": [
+				"source(output(",
+				"          airline_id as string,",
+				"          airline_name as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> BronzeDimAirline",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> BronzeAirline",
+				"     format: 'parquet') ~> BronzeDimFlight",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> BronzeFlight",
+				"     format: 'parquet') ~> BronzeDimPassenger",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     format: 'parquet') ~> BronzePassenger"
+				"     format: 'parquet') ~> BronzeFactBooking",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> BronzeDimAirport",
+				"BronzeDimAirline derive() ~> derivedColumnCountry"
 			]
 		}
 	}
