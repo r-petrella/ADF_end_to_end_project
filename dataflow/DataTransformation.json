@@ -68,6 +68,13 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "SilverFactBooking"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SilverDimAirport"
 				}
 			],
 			"transformations": [
@@ -109,6 +116,9 @@
 				},
 				{
 					"name": "alterRow4"
+				},
+				{
+					"name": "alterRow5"
 				}
 			],
 			"scriptLines": [
@@ -199,6 +209,7 @@
 				"selectCols alterRow(upsertIf(1==1)) ~> alterRow2",
 				"derivedName alterRow(upsertIf(1==1)) ~> alterRow3",
 				"castTicketCost alterRow(upsertIf(1==1)) ~> alterRow4",
+				"derivedAirportName alterRow(upsertIf(1==1)) ~> alterRow5",
 				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
@@ -259,19 +270,40 @@
 				"alterRow4 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'FactBooking',",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
 				"     vacuum: 0,",
 				"     deletable: false,",
-				"     insertable: true,",
+				"     insertable: false,",
 				"     updateable: false,",
-				"     upsertable: false,",
+				"     upsertable: true,",
+				"     keys:['booking_id'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SilverFactBooking"
+				"     skipDuplicateMapOutputs: true) ~> SilverFactBooking",
+				"alterRow5 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['airport_id'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SilverDimAirport"
 			]
 		}
 	}
