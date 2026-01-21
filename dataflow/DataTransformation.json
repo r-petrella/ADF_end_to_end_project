@@ -40,7 +40,11 @@
 					"name": "BronzeDimAirport"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "derivedColumnCountry"
@@ -62,6 +66,15 @@
 				},
 				{
 					"name": "derivedName"
+				},
+				{
+					"name": "castTicketCost"
+				},
+				{
+					"name": "derivedAirportName"
+				},
+				{
+					"name": "alterRow1"
 				}
 			],
 			"scriptLines": [
@@ -95,11 +108,29 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> BronzeDimPassenger",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          booking_id as integer,",
+				"          passenger_id as integer,",
+				"          flight_id as integer,",
+				"          airline_id as integer,",
+				"          origin_airport_id as integer,",
+				"          destination_airport_id as integer,",
+				"          booking_date as date,",
+				"          ticket_cost as decimal(10,2),",
+				"          flight_duration_mins as integer,",
+				"          checkin_status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> BronzeFactBooking",
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          airport_id as short,",
+				"          airport_name as string,",
+				"          city as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> BronzeDimAirport",
@@ -124,7 +155,17 @@
 				"selectColstoRename derive(gender_flag = regexReplace(gender_flag, \"M\", \"Male\")) ~> derivedGenderFlag",
 				"derivedGenderFlag derive(gender_flag = regexReplace(gender_flag, \"F\", \"Female\")) ~> derivedGenderFlagFemale",
 				"derivedGenderFlagFemale filter(age > 25 ) ~> filterAge",
-				"filterAge derive(first_name = split(full_name, \" \")[1]) ~> derivedName"
+				"filterAge derive(first_name = split(full_name, \" \")[1]) ~> derivedName",
+				"BronzeFactBooking cast(output(",
+				"          ticket_cost as integer '000'",
+				"     ),",
+				"     errors: true) ~> castTicketCost",
+				"BronzeDimAirport derive(airport_name = lower(airport_name)) ~> derivedAirportName",
+				"derivedColumnCountry alterRow(upsertIf(1==1)) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
