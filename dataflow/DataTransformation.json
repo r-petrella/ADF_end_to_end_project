@@ -47,6 +47,27 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "SilverDimAirline"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SilverDimFlight"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SilverDimPassenger"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SilverFactBooking"
 				}
 			],
 			"transformations": [
@@ -78,7 +99,16 @@
 					"name": "derivedAirportName"
 				},
 				{
-					"name": "alterRow1"
+					"name": "Upsert"
+				},
+				{
+					"name": "alterRow2"
+				},
+				{
+					"name": "alterRow3"
+				},
+				{
+					"name": "alterRow4"
 				}
 			],
 			"scriptLines": [
@@ -165,8 +195,11 @@
 				"     ),",
 				"     errors: true) ~> castTicketCost",
 				"BronzeDimAirport derive(airport_name = lower(airport_name)) ~> derivedAirportName",
-				"derivedColumnCountry alterRow(upsertIf(1==1)) ~> alterRow1",
-				"alterRow1 sink(allowSchemaDrift: true,",
+				"derivedColumnCountry alterRow(upsertIf(1==1)) ~> Upsert",
+				"selectCols alterRow(upsertIf(1==1)) ~> alterRow2",
+				"derivedName alterRow(upsertIf(1==1)) ~> alterRow3",
+				"castTicketCost alterRow(upsertIf(1==1)) ~> alterRow4",
+				"Upsert sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
@@ -184,7 +217,61 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SilverDimAirline"
+				"     skipDuplicateMapOutputs: true) ~> SilverDimAirline",
+				"alterRow2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'DimFlight',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['flight_id'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SilverDimFlight",
+				"alterRow3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'DimPassenger',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['passenger_id'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SilverDimPassenger",
+				"alterRow4 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SilverFactBooking"
 			]
 		}
 	}
