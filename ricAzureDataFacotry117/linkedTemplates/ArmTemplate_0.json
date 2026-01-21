@@ -1199,8 +1199,6 @@
 						"name": "ExecuteOnPrem",
 						"description": "Insert in the parent pipeline the parameters of the child pipelines!!!",
 						"type": "ExecutePipeline",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"secureInput": false
@@ -1231,8 +1229,6 @@
 					{
 						"name": "ExecuteAPI",
 						"type": "ExecutePipeline",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "ExecuteOnPrem",
@@ -1280,7 +1276,7 @@
 					},
 					{
 						"name": "Failure_success Alert",
-						"description": "COLLEGAMENTO ALLA LOGIC APP ATTRAVERSO UNA REST API. QUANDO L'ACTIVITY WEB FA CONTATTA LA LOGIC APP ATTRAVERSO L'HTTP DELLA REST API, LA LOGIC APP INVIA UNA MAIL CON VARIABILI DINAMICHE PER INDICARE LO STATO DI  ESECUZIONE DELLA TERZA PIPELINE. LO SCRIPT DINAMICO DINAMICO DELLA WEB ACTIVITY CHE DEVE AVERE I NOMI DELLE VARIABILI CHE CORRISPONDONO A QUELLI CREATI NEL JSON DELLA LOGIC APP",
+						"description": "COLLEGAMENTO ALLA LOGIC APP ATTRAVERSO UNA REST API. QUANDO QUESTA ACTIVITY WEB CONTATTA LA LOGIC APP ATTRAVERSO L'HTTP DELLA REST API, LA LOGIC APP INVIA UNA MAIL CON VARIABILI DINAMICHE PER INDICARE LO STATO DI  ESECUZIONE DELLA TERZA PIPELINE. LO SCRIPT DINAMICO DELLA WEB ACTIVITY DEVE AVERE I NOMI DELLE VARIABILI CHE CORRISPONDONO A QUELLI CREATI NEL JSON DELLA LOGIC APP, COSI' SULLA MAIL DELL'APP ARRIVANO LE VARIABILI DALLA WEB ACTIVITY",
 						"type": "WebActivity",
 						"dependsOn": [
 							{
