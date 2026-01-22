@@ -101,6 +101,7 @@
 				"selectCols aggregate(groupBy(airline_name),",
 				"     Total_Sales = sum(ticket_cost)) ~> aggregateAirline",
 				"aggregateAirline window(over(Total_Sales),",
+				"     desc(Total_Sales, true),",
 				"     rangeSpecified: true,",
 				"     Top = denseRank()) ~> Ranking"
 			]
