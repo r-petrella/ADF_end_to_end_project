@@ -39,6 +39,9 @@
 				},
 				{
 					"name": "Ranking"
+				},
+				{
+					"name": "filterTop5"
 				}
 			],
 			"scriptLines": [
@@ -100,10 +103,9 @@
 				"     skipDuplicateMapOutputs: true) ~> selectCols",
 				"selectCols aggregate(groupBy(airline_name),",
 				"     Total_Sales = sum(ticket_cost)) ~> aggregateAirline",
-				"aggregateAirline window(over(Total_Sales),",
-				"     desc(Total_Sales, true),",
-				"     rangeSpecified: true,",
-				"     Top = denseRank()) ~> Ranking"
+				"aggregateAirline window(desc(Total_Sales, true),",
+				"     Top = denseRank()) ~> Ranking",
+				"Ranking filter(Top <= 5) ~> filterTop5"
 			]
 		}
 	}
