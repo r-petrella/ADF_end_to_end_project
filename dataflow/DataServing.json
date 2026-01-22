@@ -33,6 +33,12 @@
 				},
 				{
 					"name": "selectCols"
+				},
+				{
+					"name": "aggregateAirline"
+				},
+				{
+					"name": "Ranking"
 				}
 			],
 			"scriptLines": [
@@ -91,7 +97,12 @@
 				"          country",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectCols"
+				"     skipDuplicateMapOutputs: true) ~> selectCols",
+				"selectCols aggregate(groupBy(airline_name),",
+				"     Total_Sales = sum(ticket_cost)) ~> aggregateAirline",
+				"aggregateAirline window(over(Total_Sales),",
+				"     rangeSpecified: true,",
+				"     Top = denseRank()) ~> Ranking"
 			]
 		}
 	}
