@@ -53,6 +53,15 @@
 				},
 				{
 					"name": "InsertalterRow"
+				},
+				{
+					"name": "selectLast2Cols"
+				},
+				{
+					"name": "aggregateAirlinebyCountry"
+				},
+				{
+					"name": "sortCount"
 				}
 			],
 			"scriptLines": [
@@ -118,6 +127,14 @@
 				"     Top = denseRank()) ~> Ranking",
 				"Ranking filter(Top <= 5) ~> filterTop5",
 				"filterTop5 alterRow(insertIf(1==1)) ~> InsertalterRow",
+				"SilverDimAirline select(mapColumn(",
+				"          country",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectLast2Cols",
+				"selectLast2Cols aggregate(groupBy(country),",
+				"     num_airlines = count(country)) ~> aggregateAirlinebyCountry",
+				"aggregateAirlinebyCountry sort(desc(num_airlines, true)) ~> sortCount",
 				"InsertalterRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
