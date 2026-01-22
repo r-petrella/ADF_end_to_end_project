@@ -3,11 +3,76 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "GoldDimAirline"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "GoldDimFlight"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "GoldenFactBooking"
+				}
+			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "Airlinejoin"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          airline_id as integer,",
+				"          airline_name as string,",
+				"          country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'DimAirline') ~> GoldDimAirline",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'DimFlight') ~> GoldDimFlight",
+				"source(output(",
+				"          booking_id as integer,",
+				"          passenger_id as integer,",
+				"          flight_id as integer,",
+				"          airline_id as integer,",
+				"          origin_airport_id as integer,",
+				"          destination_airport_id as integer,",
+				"          booking_date as date,",
+				"          ticket_cost as integer,",
+				"          flight_duration_mins as integer,",
+				"          checkin_status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'silver',",
+				"     folderPath: 'FactBooking') ~> GoldenFactBooking",
+				"GoldenFactBooking, GoldDimAirline join(GoldenFactBooking@airline_id == GoldDimAirline@airline_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> Airlinejoin"
 			]
 		}
 	}
