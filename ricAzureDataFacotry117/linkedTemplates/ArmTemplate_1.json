@@ -13,6 +13,28 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Json_source_file_list')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "liked_service_on_prem_file",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": "parametrized_source_files_list.json",
+						"folderPath": "ADF_end_to_end_project"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/source_dataset_onprem')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -156,19 +178,19 @@
 							"name": "derivedAirportName"
 						},
 						{
-							"name": "Upsert"
+							"name": "UpsertAirline"
 						},
 						{
-							"name": "alterRow2"
+							"name": "UpsertFlight"
 						},
 						{
-							"name": "alterRow3"
+							"name": "UpsertPassenger"
 						},
 						{
-							"name": "alterRow4"
+							"name": "UpsertBooking"
 						},
 						{
-							"name": "alterRow5"
+							"name": "UpsertAirport"
 						}
 					],
 					"scriptLines": [
@@ -248,19 +270,19 @@
 						"     skipDuplicateMapOutputs: true) ~> selectColstoRename",
 						"selectColstoRename derive(gender_flag = regexReplace(gender_flag, \"M\", \"Male\")) ~> derivedGenderFlag",
 						"derivedGenderFlag derive(gender_flag = regexReplace(gender_flag, \"F\", \"Female\")) ~> derivedGenderFlagFemale",
-						"derivedGenderFlagFemale filter(age > 25 ) ~> filterAge",
+						"derivedGenderFlagFemale filter(age > 25) ~> filterAge",
 						"filterAge derive(first_name = split(full_name, \" \")[1]) ~> derivedName",
 						"BronzeFactBooking cast(output(",
 						"          ticket_cost as integer '000'",
 						"     ),",
 						"     errors: true) ~> castTicketCost",
 						"BronzeDimAirport derive(airport_name = lower(airport_name)) ~> derivedAirportName",
-						"derivedColumnCountry alterRow(upsertIf(1==1)) ~> Upsert",
-						"selectCols alterRow(upsertIf(1==1)) ~> alterRow2",
-						"derivedName alterRow(upsertIf(1==1)) ~> alterRow3",
-						"castTicketCost alterRow(upsertIf(1==1)) ~> alterRow4",
-						"derivedAirportName alterRow(upsertIf(1==1)) ~> alterRow5",
-						"Upsert sink(allowSchemaDrift: true,",
+						"derivedColumnCountry alterRow(upsertIf(1==1)) ~> UpsertAirline",
+						"selectCols alterRow(upsertIf(1==1)) ~> UpsertFlight",
+						"derivedName alterRow(upsertIf(1==1)) ~> UpsertPassenger",
+						"castTicketCost alterRow(upsertIf(1==1)) ~> UpsertBooking",
+						"derivedAirportName alterRow(upsertIf(1==1)) ~> UpsertAirport",
+						"UpsertAirline sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'silver',",
@@ -279,7 +301,7 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SilverDimAirline",
-						"alterRow2 sink(allowSchemaDrift: true,",
+						"UpsertFlight sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'silver',",
@@ -298,7 +320,7 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SilverDimFlight",
-						"alterRow3 sink(allowSchemaDrift: true,",
+						"UpsertPassenger sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'silver',",
@@ -317,7 +339,7 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SilverDimPassenger",
-						"alterRow4 sink(allowSchemaDrift: true,",
+						"UpsertBooking sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'silver',",
@@ -336,7 +358,7 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> SilverFactBooking",
-						"alterRow5 sink(allowSchemaDrift: true,",
+						"UpsertAirport sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delta',",
 						"     fileSystem: 'silver',",
@@ -359,6 +381,114 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GoldLayer')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GoldDataFlow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DataServing",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SilverDimAirline": {},
+									"SilverDimFlight": {},
+									"SilverFactBooking": {},
+									"SinkGoldFactBooking": {},
+									"sinkGoldDimAirline": {},
+									"SinkGoldDimFlight": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "None",
+							"cacheSinks": {
+								"firstRowOnly": true
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SilverLayer')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "SilverDataFlow",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DataTransformation",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"BronzeDimAirline": {},
+									"BronzeDimFlight": {},
+									"BronzeDimPassenger": {},
+									"BronzeFactBooking": {},
+									"BronzeDimAirport": {},
+									"SilverDimAirline": {},
+									"SilverDimFlight": {},
+									"SilverDimPassenger": {},
+									"SilverFactBooking": {},
+									"SilverDimAirport": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "None",
+							"cacheSinks": {
+								"firstRowOnly": true
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DataTransformation')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/onprem_ingestion')]",
@@ -677,6 +807,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Json_source_file_list')]",
 				"[concat(variables('factoryId'), '/datasets/source_dataset_onprem')]"
 			]
 		},
@@ -807,63 +938,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/source_dataset_onprem')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SilverLayer')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "SilverDataFlow",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DataTransformation",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"BronzeDimAirline": {},
-									"BronzeDimFlight": {},
-									"BronzeDimPassenger": {},
-									"BronzeFactBooking": {},
-									"BronzeDimAirport": {},
-									"SilverDimAirline": {},
-									"SilverDimFlight": {},
-									"SilverDimPassenger": {},
-									"SilverFactBooking": {},
-									"SilverDimAirport": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "None",
-							"cacheSinks": {
-								"firstRowOnly": true
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DataTransformation')]"
 			]
 		},
 		{
