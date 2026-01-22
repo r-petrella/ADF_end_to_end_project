@@ -52,7 +52,7 @@
 					"name": "filterTop5"
 				},
 				{
-					"name": "UpsertalterRow"
+					"name": "InsertalterRow"
 				}
 			],
 			"scriptLines": [
@@ -117,12 +117,13 @@
 				"aggregateAirline window(desc(Total_Sales, true),",
 				"     Top = denseRank()) ~> Ranking",
 				"Ranking filter(Top <= 5) ~> filterTop5",
-				"filterTop5 alterRow(upsertIf(1==1)) ~> UpsertalterRow",
-				"UpsertalterRow sink(allowSchemaDrift: true,",
+				"filterTop5 alterRow(insertIf(1==1)) ~> InsertalterRow",
+				"InsertalterRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'gold',",
 				"     folderPath: 'business_view',",
+				"     overwrite: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
@@ -130,7 +131,7 @@
 				"     deletable: false,",
 				"     insertable: false,",
 				"     updateable: false,",
-				"     upsertable: true,",
+				"     upsertable: false,",
 				"     keys:['airline_name'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
