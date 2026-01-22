@@ -76,6 +76,12 @@
 				},
 				{
 					"name": "sortCount"
+				},
+				{
+					"name": "UpsertaAlterRowFlight"
+				},
+				{
+					"name": "InsertalterRowAirline"
 				}
 			],
 			"scriptLines": [
@@ -149,6 +155,8 @@
 				"selectLast2Cols aggregate(groupBy(country),",
 				"     num_airlines = count(country)) ~> aggregateAirlinebyCountry",
 				"aggregateAirlinebyCountry sort(desc(num_airlines, true)) ~> sortCount",
+				"SilverDimFlight alterRow(upsertIf(1==1)) ~> UpsertaAlterRowFlight",
+				"sortCount alterRow(insertIf(1==1)) ~> InsertalterRowAirline",
 				"InsertalterRow sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
@@ -169,11 +177,12 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SinkGoldFactBooking",
-				"sortCount sink(allowSchemaDrift: true,",
+				"InsertalterRowAirline sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'gold',",
 				"     folderPath: 'business_view',",
+				"     overwrite: true,",
 				"     mergeSchema: false,",
 				"     autoCompact: false,",
 				"     optimizedWrite: false,",
@@ -187,7 +196,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> sinkGoldDimAirline",
-				"SilverDimFlight sink(allowSchemaDrift: true,",
+				"UpsertaAlterRowFlight sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'gold',",
@@ -196,9 +205,10 @@
 				"     optimizedWrite: false,",
 				"     vacuum: 0,",
 				"     deletable: false,",
-				"     insertable: true,",
+				"     insertable: false,",
 				"     updateable: false,",
-				"     upsertable: false,",
+				"     upsertable: true,",
+				"     keys:['flight_id'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
