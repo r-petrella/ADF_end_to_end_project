@@ -106,19 +106,19 @@
 					"name": "derivedAirportName"
 				},
 				{
-					"name": "Upsert"
+					"name": "UpsertAirline"
 				},
 				{
-					"name": "alterRow2"
+					"name": "UpsertFlight"
 				},
 				{
-					"name": "alterRow3"
+					"name": "UpsertPassenger"
 				},
 				{
-					"name": "alterRow4"
+					"name": "UpsertBooking"
 				},
 				{
-					"name": "alterRow5"
+					"name": "UpsertAirport"
 				}
 			],
 			"scriptLines": [
@@ -198,19 +198,19 @@
 				"     skipDuplicateMapOutputs: true) ~> selectColstoRename",
 				"selectColstoRename derive(gender_flag = regexReplace(gender_flag, \"M\", \"Male\")) ~> derivedGenderFlag",
 				"derivedGenderFlag derive(gender_flag = regexReplace(gender_flag, \"F\", \"Female\")) ~> derivedGenderFlagFemale",
-				"derivedGenderFlagFemale filter(age > 25 ) ~> filterAge",
+				"derivedGenderFlagFemale filter(age > 25) ~> filterAge",
 				"filterAge derive(first_name = split(full_name, \" \")[1]) ~> derivedName",
 				"BronzeFactBooking cast(output(",
 				"          ticket_cost as integer '000'",
 				"     ),",
 				"     errors: true) ~> castTicketCost",
 				"BronzeDimAirport derive(airport_name = lower(airport_name)) ~> derivedAirportName",
-				"derivedColumnCountry alterRow(upsertIf(1==1)) ~> Upsert",
-				"selectCols alterRow(upsertIf(1==1)) ~> alterRow2",
-				"derivedName alterRow(upsertIf(1==1)) ~> alterRow3",
-				"castTicketCost alterRow(upsertIf(1==1)) ~> alterRow4",
-				"derivedAirportName alterRow(upsertIf(1==1)) ~> alterRow5",
-				"Upsert sink(allowSchemaDrift: true,",
+				"derivedColumnCountry alterRow(upsertIf(1==1)) ~> UpsertAirline",
+				"selectCols alterRow(upsertIf(1==1)) ~> UpsertFlight",
+				"derivedName alterRow(upsertIf(1==1)) ~> UpsertPassenger",
+				"castTicketCost alterRow(upsertIf(1==1)) ~> UpsertBooking",
+				"derivedAirportName alterRow(upsertIf(1==1)) ~> UpsertAirport",
+				"UpsertAirline sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
@@ -229,7 +229,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SilverDimAirline",
-				"alterRow2 sink(allowSchemaDrift: true,",
+				"UpsertFlight sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
@@ -248,7 +248,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SilverDimFlight",
-				"alterRow3 sink(allowSchemaDrift: true,",
+				"UpsertPassenger sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
@@ -267,7 +267,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SilverDimPassenger",
-				"alterRow4 sink(allowSchemaDrift: true,",
+				"UpsertBooking sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
@@ -286,7 +286,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SilverFactBooking",
-				"alterRow5 sink(allowSchemaDrift: true,",
+				"UpsertAirport sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
