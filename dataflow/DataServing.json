@@ -33,6 +33,20 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "SinkGoldFactBooking"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkGoldDimAirline"
+				},
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SinkGoldDimFlight"
 				}
 			],
 			"transformations": [
@@ -154,7 +168,42 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> SinkGoldFactBooking"
+				"     skipDuplicateMapOutputs: true) ~> SinkGoldFactBooking",
+				"sortCount sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'gold',",
+				"     folderPath: 'business_view',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sinkGoldDimAirline",
+				"SilverDimFlight sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'gold',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: true,",
+				"     updateable: false,",
+				"     upsertable: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SinkGoldDimFlight"
 			]
 		}
 	}
