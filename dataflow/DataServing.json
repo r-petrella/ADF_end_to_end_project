@@ -9,24 +9,32 @@
 						"referenceName": "linked_service_ADLS",
 						"type": "LinkedServiceReference"
 					},
-					"name": "GoldDimAirline"
+					"name": "SilverDimAirline"
 				},
 				{
 					"linkedService": {
 						"referenceName": "linked_service_ADLS",
 						"type": "LinkedServiceReference"
 					},
-					"name": "GoldDimFlight"
+					"name": "SilverDimFlight"
 				},
 				{
 					"linkedService": {
 						"referenceName": "linked_service_ADLS",
 						"type": "LinkedServiceReference"
 					},
-					"name": "GoldenFactBooking"
+					"name": "SilverFactBooking"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "linked_service_ADLS",
+						"type": "LinkedServiceReference"
+					},
+					"name": "SinkGoldFactBooking"
+				}
+			],
 			"transformations": [
 				{
 					"name": "Airlinejoin"
@@ -42,6 +50,9 @@
 				},
 				{
 					"name": "filterTop5"
+				},
+				{
+					"name": "UpsertalterRow"
 				}
 			],
 			"scriptLines": [
@@ -55,13 +66,13 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
-				"     folderPath: 'DimAirline') ~> GoldDimAirline",
+				"     folderPath: 'DimAirline') ~> SilverDimAirline",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
-				"     folderPath: 'DimFlight') ~> GoldDimFlight",
+				"     folderPath: 'DimFlight') ~> SilverDimFlight",
 				"source(output(",
 				"          booking_id as integer,",
 				"          passenger_id as integer,",
@@ -79,8 +90,8 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delta',",
 				"     fileSystem: 'silver',",
-				"     folderPath: 'FactBooking') ~> GoldenFactBooking",
-				"GoldenFactBooking, GoldDimAirline join(GoldenFactBooking@airline_id == GoldDimAirline@airline_id,",
+				"     folderPath: 'FactBooking') ~> SilverFactBooking",
+				"SilverFactBooking, SilverDimAirline join(SilverFactBooking@airline_id == SilverDimAirline@airline_id,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -89,7 +100,7 @@
 				"          booking_id,",
 				"          passenger_id,",
 				"          flight_id,",
-				"          airline_id = GoldenFactBooking@airline_id,",
+				"          airline_id = SilverFactBooking@airline_id,",
 				"          origin_airport_id,",
 				"          destination_airport_id,",
 				"          booking_date,",
@@ -105,7 +116,27 @@
 				"     Total_Sales = sum(ticket_cost)) ~> aggregateAirline",
 				"aggregateAirline window(desc(Total_Sales, true),",
 				"     Top = denseRank()) ~> Ranking",
-				"Ranking filter(Top <= 5) ~> filterTop5"
+				"Ranking filter(Top <= 5) ~> filterTop5",
+				"filterTop5 alterRow(upsertIf(1==1)) ~> UpsertalterRow",
+				"UpsertalterRow sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'gold',",
+				"     folderPath: 'business_view',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable: false,",
+				"     insertable: false,",
+				"     updateable: false,",
+				"     upsertable: true,",
+				"     keys:['airline_name'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SinkGoldFactBooking"
 			]
 		}
 	}
